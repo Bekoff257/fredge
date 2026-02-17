@@ -1,0 +1,1 @@
+export default function StatsPage() { return <main className="mx-auto max-w-6xl p-4"><h1 className="text-2xl font-bold">Statistika</h1><div className="grid gap-4 md:grid-cols-3"><div className="card p-4">Daily totals</div><div className="card p-4">Monthly totals</div><div className="card p-4">Debt totals</div></div></main>; }
