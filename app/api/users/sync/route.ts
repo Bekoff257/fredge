@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { connectDb } from '@/lib/db';
 import { User } from '@/models/User';
-import { verifyIdToken } from '@/lib/auth-server';
+import { verifySessionCookieFromRequest } from '@/lib/server-auth';
 
 export async function POST() {
-  const token = await verifyIdToken();
+  const token = await verifySessionCookieFromRequest();
   await connectDb();
   const count = await User.countDocuments();
   const user = await User.findOneAndUpdate(
