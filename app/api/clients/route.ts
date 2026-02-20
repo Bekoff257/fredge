@@ -1,14 +1,20 @@
-import { NextResponse } from 'next/server';
-import { connectDb } from '@/lib/db';
-import { Client } from '@/models/Client';
+import { NextRequest, NextResponse } from 'next/server';
+import { requireUser } from '@/lib/server-auth';
+import { dbConnect } from '@/lib/db';
+import Client from '@/models/Client';
 import { clientSchema } from '@/lib/validators';
-import { requireUser } from '@/lib/server-guards';
 
-export async function GET() { await requireUser(); await connectDb(); return NextResponse.json(await Client.find({ status: 'active' })); }
-export async function POST(req: Request) {
-  await requireUser();
-  const body = clientSchema.parse(await req.json());
-  await connectDb();
-  const created = await Client.create({ ...body, status: 'active' });
-  return NextResponse.json(created, { status: 201 });
+export async function GET(req: NextRequest) {
+  await requireUser(); await dbConnect();
+  const q = req.nextUrl.searchParams.get('q');
+  const filter = q ? { status: 'ACTIVE', $text: { $search: q } } : { status: 'ACTIVE' };
+  const items = await Client.find(filter).sort({ createdAt: -1 });
+  return NextResponse.json({ items });
+}
+
+export async function POST(req: NextRequest) {
+  const user = await requireUser(); await dbConnect();
+  const data = clientSchema.parse(await req.json());
+  const item = await Client.create({ ...data, status: 'ACTIVE', createdBy: user.firebaseUid, entryDate: new Date(data.entryDate) });
+  return NextResponse.json({ item });
 }

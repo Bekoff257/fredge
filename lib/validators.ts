@@ -3,20 +3,16 @@ import { z } from 'zod';
 export const clientSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  phone: z.string().min(7),
+  phone: z.string().min(5),
   productName: z.string().min(1),
-  productType: z.string().min(1),
-  quantityKg: z.number().positive(),
-  room: z.string().min(1),
-  containerType: z.enum(['Yashik', 'Qop', 'Karzinka']),
-  containerCount: z.number().int().positive(),
+  productTypeId: z.string().min(1),
+  quantityKg: z.coerce.number().positive(),
+  roomId: z.string().min(1),
+  containerType: z.enum(['YASHIK', 'QOP', 'KARZINKA']),
+  containerCount: z.coerce.number().int().min(1),
   entryDate: z.string(),
-  note: z.string().optional()
+  note: z.string().optional().default('')
 });
 
-export const finalizeSchema = z.object({
-  clientId: z.string(),
-  dailyRateSomPerKg: z.number().positive(),
-  exitDate: z.string(),
-  paymentType: z.enum(['cash', 'debt'])
-});
+export const finalizeSchema = z.object({ dailyRateSomPerKg: z.coerce.number().positive(), exitDate: z.string(), paymentType: z.enum(['CASH','DEBT']) });
+export const debtPaymentSchema = z.object({ amountSom: z.coerce.number().positive(), note: z.string().default('') });

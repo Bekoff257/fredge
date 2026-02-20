@@ -1,7 +1,28 @@
 import { Schema, model, models } from 'mongoose';
-const schema = new Schema({
-  clientId: String, fullName: String, phone: String, productName: String, productType: String,
-  quantityKg: Number, room: String, entryDate: Date, exitDate: Date, daysStored: Number,
-  dailyRateSomPerKg: Number, total: Number, paymentType: { type: String, enum: ['cash', 'debt'] }, immutableSnapshot: Schema.Types.Mixed
-}, { timestamps: true });
-export const Archive = models.Archive || model('Archive', schema);
+
+const archiveSchema = new Schema(
+  {
+    clientId: String,
+    firstName: String,
+    lastName: String,
+    phone: String,
+    productName: String,
+    productTypeName: String,
+    quantityKg: Number,
+    roomName: String,
+    containerType: String,
+    containerCount: Number,
+    note: String,
+    entryDate: Date,
+    exitDate: Date,
+    daysStored: Number,
+    dailyRateSomPerKg: Number,
+    totalSom: Number,
+    paymentStatus: { type: String, enum: ['PAID', 'DEBT'] },
+    closedBy: String,
+    closedAt: Date
+  },
+  { timestamps: true }
+);
+
+export default models.Archive || model('Archive', archiveSchema);

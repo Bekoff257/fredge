@@ -1,22 +1,14 @@
+'use client';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { Card } from '@/components/ui/card';
 import Link from 'next/link';
-import { AppNav } from '@/components/layout/app-shell';
+import { AppShell } from '@/components/layout/app-shell';
 
-const cards = [
-  { title: 'Jami mijozlar', value: '0' },
-  { title: 'Qarzdorlar', value: '0' },
-  { title: 'Jami mahsulotlar (kg)', value: '0' }
-];
+type Stats = { kpi: { activeClients: number; debtTotal: number; debtCount: number; storedKg: number } };
 
-const tiles = [
-  ['/clients/new', "Yangi mijoz qo'shish"], ['/clients', 'Faol mijozlar'], ['/debtors', 'Qarzdorlar'], ['/my-debts', 'Mening qarzlarim'], ['/stats', 'Statistika'], ['/archive', 'Arxiv']
-] as const;
-
-export default function HomePage() {
-  return (
-    <main className="mx-auto max-w-7xl space-y-6 p-4">
-      <AppNav />
-      <section className="grid gap-4 md:grid-cols-3">{cards.map((c)=><article key={c.title} className="card p-4"><p className="text-slate-500">{c.title}</p><p className="text-2xl font-bold">{c.value}</p></article>)}</section>
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{tiles.map(([href, label])=><Link key={href} href={href} className="card p-6 text-lg font-semibold hover:border-sky-400">{label}</Link>)}</section>
-    </main>
-  );
+export default function DashboardPage() {
+  const [data, setData] = useState<Stats | null>(null);
+  useEffect(() => { api.get('/stats').then((r) => setData(r.data)); }, []);
+  return <AppShell><div className='space-y-4'><div className='grid gap-4 md:grid-cols-3'><Card>Total active: {data?.kpi.activeClients ?? 0}</Card><Card>Debt: {data?.kpi.debtTotal ?? 0} ({data?.kpi.debtCount ?? 0})</Card><Card>Stored kg: {data?.kpi.storedKg ?? 0}</Card></div><div className='grid gap-3 md:grid-cols-5'>{['/clients/new','/clients','/debtors','/archive','/stats'].map((href)=><Link key={href} href={href} className='rounded-xl border bg-white p-4 text-center'>{href}</Link>)}</div></div></AppShell>;
 }
