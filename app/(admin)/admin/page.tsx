@@ -1,1 +1,3 @@
-export default function AdminPage(){return <div><h1 className="text-2xl font-bold">System Control Room</h1><div className="mt-4 grid gap-4 md:grid-cols-3"><div className="rounded-xl bg-slate-900 p-4">Total debt</div><div className="rounded-xl bg-slate-900 p-4">Overdue</div><div className="rounded-xl bg-slate-900 p-4">Largest debtors</div></div></div>}
+import { redirect } from 'next/navigation';
+import { requireAdmin } from '@/lib/server-auth';
+export default async function AdminPage() { try { await requireAdmin(); } catch { redirect('/'); } return <div className='rounded-xl border bg-white p-6'>Hidden admin dashboard</div>; }

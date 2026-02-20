@@ -1,18 +1,22 @@
 import './globals.css';
 import { ReactNode } from 'react';
+import { cookies } from 'next/headers';
+import { NextIntlClientProvider } from 'next-intl';
 import { Toaster } from 'sonner';
-import { LanguageProvider } from '@/components/layout/language-provider';
-import { Header } from '@/components/layout/header';
+import { getMessages, Locale, locales } from '@/lib/i18n';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const localeCookie = cookies().get('locale')?.value as Locale | undefined;
+  const locale = localeCookie && locales.includes(localeCookie) ? localeCookie : 'uz';
+  const messages = await getMessages(locale);
+
   return (
-    <html lang="uz">
+    <html lang={locale}>
       <body>
-        <LanguageProvider>
-          <Header />
+        <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
-          <Toaster position="top-right" />
-        </LanguageProvider>
+          <Toaster position="top-right" richColors />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

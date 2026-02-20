@@ -1,3 +1,3 @@
 import { Schema, model, models } from 'mongoose';
-const schema = new Schema({ name: { type: String, required: true, unique: true }, isActive: { type: Boolean, default: true } }, { timestamps: true });
-export const Room = models.Room || model('Room', schema);
+const roomSchema = new Schema({ name: { type: String, unique: true, required: true }, isActive: { type: Boolean, default: true } }, { timestamps: true });
+export default models.Room || model('Room', roomSchema);

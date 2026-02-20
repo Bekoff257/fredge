@@ -1,8 +1,23 @@
 import { Schema, model, models } from 'mongoose';
-const schema = new Schema({
-  firstName: String, lastName: String, phone: String, productName: String, productType: String,
-  quantityKg: Number, room: String, containerType: String, containerCount: Number, entryDate: Date,
-  note: String, status: { type: String, default: 'active' }
-}, { timestamps: true });
-schema.index({ firstName: 1, lastName: 1, phone: 1 });
-export const Client = models.Client || model('Client', schema);
+
+const clientSchema = new Schema(
+  {
+    firstName: String,
+    lastName: String,
+    phone: String,
+    productName: String,
+    productTypeId: { type: Schema.Types.ObjectId, ref: 'ProductType' },
+    quantityKg: Number,
+    roomId: { type: Schema.Types.ObjectId, ref: 'Room' },
+    containerType: { type: String, enum: ['YASHIK', 'QOP', 'KARZINKA'] },
+    containerCount: Number,
+    entryDate: Date,
+    note: String,
+    status: { type: String, enum: ['ACTIVE', 'CLOSED'], default: 'ACTIVE' },
+    createdBy: String
+  },
+  { timestamps: true }
+);
+clientSchema.index({ firstName: 'text', lastName: 'text', phone: 'text' });
+
+export default models.Client || model('Client', clientSchema);

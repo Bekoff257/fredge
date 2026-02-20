@@ -1,8 +1,15 @@
-import { connectDb } from '@/lib/db';
-import { Client } from '@/models/Client';
+'use client';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { Table, Td, Th } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 
-export default async function ClientsPage() {
-  await connectDb();
-  const clients = await Client.find({ status: 'active' }).sort({ createdAt: -1 }).lean();
-  return <main className="mx-auto max-w-5xl space-y-4 p-4"><h1 className="text-2xl font-bold">Faol mijozlar</h1>{clients.length === 0 ? <p className="card p-8 text-center">Bo'sh holat</p> : clients.map((c) => <article key={String(c._id)} className="card p-4"><p className="font-semibold">{c.firstName} {c.lastName}</p><p>{c.phone}</p><p>{c.productName} / {c.productType} • {c.quantityKg}kg</p></article>)}</main>;
+type Client = { _id: string; firstName: string; lastName: string; phone: string; quantityKg: number; entryDate: string };
+
+export default function ClientsPage() {
+  const [items, setItems] = useState<Client[]>([]);
+  const load = () => api.get('/clients').then((r) => setItems(r.data.items));
+  useEffect(load, []);
+  const finalize = async (id: string) => { await api.post(`/clients/${id}/finalize`, { dailyRateSomPerKg: 500, exitDate: new Date().toISOString(), paymentType: 'CASH' }); load(); };
+  return <Table><thead><tr><Th>Name</Th><Th>Phone</Th><Th>Kg</Th><Th>Entry</Th><Th/></tr></thead><tbody>{items.map((c)=><tr key={c._id}><Td>{c.firstName} {c.lastName}</Td><Td>{c.phone}</Td><Td>{c.quantityKg}</Td><Td>{new Date(c.entryDate).toLocaleDateString()}</Td><Td><Button onClick={()=>finalize(c._id)}>Billing/Yakunlash</Button></Td></tr>)}</tbody></Table>;
 }

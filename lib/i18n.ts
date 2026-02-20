@@ -1,7 +1,6 @@
-import { getRequestConfig } from 'next-intl/server';
-
 export const locales = ['uz', 'ru'] as const;
+export type Locale = (typeof locales)[number];
 
-export default getRequestConfig(async ({ locale }) => ({
-  messages: (await import(`@/messages/${locale ?? 'uz'}.json`)).default
-}));
+export async function getMessages(locale: Locale) {
+  return (await import(`@/i18n/messages/${locale}.json`)).default;
+}

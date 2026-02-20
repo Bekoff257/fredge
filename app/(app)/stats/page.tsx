@@ -1,1 +1,5 @@
-export default function StatsPage() { return <main className="mx-auto max-w-6xl p-4"><h1 className="text-2xl font-bold">Statistika</h1><div className="grid gap-4 md:grid-cols-3"><div className="card p-4">Daily totals</div><div className="card p-4">Monthly totals</div><div className="card p-4">Debt totals</div></div></main>; }
+'use client';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+export default function StatsPage() { const [data, setData] = useState<Array<{ name: string; total: number }>>([]); useEffect(()=>{ api.get('/stats').then((r)=>setData(r.data.daily)); },[]); return <div className='h-80 rounded-xl border bg-white p-4'><ResponsiveContainer width='100%' height='100%'><LineChart data={data}><XAxis dataKey='name' /><YAxis /><Tooltip /><Line dataKey='total' stroke='#0f172a' /></LineChart></ResponsiveContainer></div>; }

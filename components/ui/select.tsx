@@ -1,4 +1,3 @@
 import { SelectHTMLAttributes } from 'react';
-export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className="w-full rounded-xl border border-slate-200 px-3 py-2" />;
-}
+import { cn } from '@/lib/utils';
+export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) { return <select {...props} className={cn('h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm', props.className)} />; }
